@@ -1,7 +1,7 @@
 require 'nokogiri'
 require 'open-uri'
 require 'pry'
-require_relative 'user'
+require_relative 'speaker'
 
 class MacBethAnalyzer
   attr_reader :file_url
@@ -22,22 +22,13 @@ class MacBethAnalyzer
   def parsed_speakers
     doc = Nokogiri::HTML(open(file_url)).xpath('//speech')
 
-    users = []
-    speeches = []
+    speakers = []
 
     doc.each do |line|
-      if line.css('speech')
-        current_parser = User.new(
-          line.css('speaker').text,
-          speeches << line.to_a.css('line').text
-        )
-      end
-      if line.css('/speech') && current_parser
-        users << current_parser
-        current_parser, speeches = nil
-      end
+      current_speaker = Speaker.new(name: line.css('speaker').text)
+      line.css('line').each { |line| current_speaker.speech << line.text }
+      speakers << current_speaker
     end
-    binding.pry
   end
 
   # def extract_content

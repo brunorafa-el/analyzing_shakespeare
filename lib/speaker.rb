@@ -1,7 +1,7 @@
-class User
+class Speaker
   attr_accessor :name, :speech
 
-  def initialize(name, speech)
+  def initialize(name:, speech: [])
     @name = name
     @speech = speech
   end
